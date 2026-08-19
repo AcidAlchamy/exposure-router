@@ -1,0 +1,73 @@
+{
+  "_note": "Regenerate with: npm run bench -- --update. runtimeMs is never recorded.",
+  "scenarios": {
+    "parallel-street": {
+      "distanceM": 1080,
+      "addedM": 480,
+      "addedPct": 80,
+      "crossedShortest": 1,
+      "crossedRouted": 0,
+      "endpointExempt": 0,
+      "readsShortest": 4.8302,
+      "readsRouted": 0.0116,
+      "serviceM": 0
+    },
+    "flanked-exit": {
+      "distanceM": 1100,
+      "addedM": 0,
+      "addedPct": 0,
+      "crossedShortest": 2,
+      "crossedRouted": 2,
+      "endpointExempt": 0,
+      "readsShortest": 9.4147,
+      "readsRouted": 9.4147,
+      "serviceM": 0
+    },
+    "saturated-downtown": {
+      "distanceM": 3399.8,
+      "addedM": 1600,
+      "addedPct": 88.9,
+      "crossedShortest": 3,
+      "crossedRouted": 0,
+      "endpointExempt": 0,
+      "readsShortest": 16.4009,
+      "readsRouted": 5.0074,
+      "serviceM": 0
+    },
+    "parking-lot-temptation": {
+      "distanceM": 1999.9,
+      "addedM": 0,
+      "addedPct": 0,
+      "crossedShortest": 0,
+      "crossedRouted": 0,
+      "endpointExempt": 0,
+      "readsShortest": 0,
+      "readsRouted": 0,
+      "serviceM": 0
+    },
+    "downtown-lv": {
+      "distanceM": 3702.2,
+      "addedM": 1659.3,
+      "addedPct": 81.2,
+      "crossedShortest": 5,
+      "crossedRouted": 0,
+      "endpointExempt": 0,
+      "readsShortest": 16.3383,
+      "readsRouted": 0.4253,
+      "serviceM": 297.4
+    },
+    "lambda-ladder": {
+      "candidateCount": 7,
+      "candidates": [
+        2042.9,
+        2057.6,
+        2379.1,
+        3633.6,
+        3634,
+        3702.2,
+        3916.7
+      ],
+      "maxGapRatio": 1.53
+    }
+  }
+}
