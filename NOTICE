@@ -1,0 +1,23 @@
+exposure-router
+Copyright 2026 AcidAlchamy
+
+This product includes software developed by AcidAlchamy, licensed under the
+Apache License, Version 2.0 (see LICENSE).
+
+--------------------------------------------------------------------------------
+Third-party data
+
+fixtures/downtown-lv.json contains road geometry derived from OpenStreetMap.
+  (c) OpenStreetMap contributors
+  Licensed under the Open Database License (ODbL) v1.0 (SPDX: ODbL-1.0)
+  https://opendatacommons.org/licenses/odbl/1-0/
+
+That file is a Derivative Database under the ODbL and is licensed under the
+ODbL, NOT under the Apache License that covers the source code. It contains
+road geometry only — no sensor, camera, vehicle or person records of any kind.
+See fixtures/PROVENANCE.md.
+
+It is excluded from the published npm tarball (see the "files" field in
+package.json) so that an Apache-2.0 package never ships an ODbL database inside
+it. It ships only as part of this git repository, where this NOTICE travels with
+it.

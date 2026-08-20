@@ -96,6 +96,7 @@ always claimed to beat it would be lying.
 
 ```bash
 npm install          # dev deps only — the library itself has zero runtime deps
+npm run build        # compile src/ -> dist/ (runs automatically on install)
 npm test             # node --test, no bundler
 npm run bench        # the measuring stick (see below)
 ```
@@ -164,8 +165,16 @@ instead of a judgement call — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Licence
 
-[Apache-2.0](LICENSE). The patent grant is deliberate: a routing model meant to
-be trusted and built on should carry an explicit one.
+**Source code: [Apache-2.0](LICENSE).** Copyright 2026 AcidAlchamy. The patent
+grant is deliberate: a routing model meant to be trusted and built on should
+carry an explicit one.
+
+**One data file is licensed differently.** `fixtures/downtown-lv.json` is road
+geometry derived from OpenStreetMap and is therefore a Derivative Database under
+the **[Open Database License (ODbL) v1.0](https://opendatacommons.org/licenses/odbl/1-0/)**
+— © OpenStreetMap contributors — *not* Apache-2.0. It is excluded from the npm
+tarball so an Apache-2.0 package never ships an ODbL database inside it. See
+[NOTICE](NOTICE) and [fixtures/PROVENANCE.md](fixtures/PROVENANCE.md).
 
 ## A note on framing
 

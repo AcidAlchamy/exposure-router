@@ -1,7 +1,7 @@
 {
   "name": "exposure-router",
   "version": "0.1.0",
-  "description": "A cost-surface router that models exposure to fixed roadside sensors: A* over a real road graph minimising distance + λ·exposure.",
+  "description": "A cost-surface router that models exposure to fixed roadside sensors: A* over a real road graph minimising distance + \u03bb\u00b7exposure.",
   "license": "Apache-2.0",
   "type": "module",
   "repository": {
@@ -12,6 +12,8 @@
     "node": ">=20"
   },
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node --import tsx --test test/costSurface.test.ts test/metrics.test.ts",
     "bench": "node --import tsx bench/run.ts"
@@ -20,5 +22,20 @@
     "@types/node": "^20.14.10",
     "tsx": "^4.19.0",
     "typescript": "^5.5.4"
-  }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "author": "AcidAlchamy"
 }

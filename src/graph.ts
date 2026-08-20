@@ -36,8 +36,8 @@ function classWeight(hw?: string): number {
 // driving one expected plate-read is worth.
 //
 // Pure and dependency-free (only the ExposureField, itself pure) so it runs
-// under node:test with no DB and no network — the same discipline as
-// proximityMath.ts.
+// under node:test with no DB and no network — the discipline every module in
+// src/ holds to.
 
 export interface GraphNode {
   id: number;

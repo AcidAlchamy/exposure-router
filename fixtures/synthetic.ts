@@ -125,9 +125,9 @@ export function flankedExit(): Scenario {
   edges.push(edgeBetween(X2, g.at(1, 0), "residential"));
   const D = g.at(1, 3); // ~1.1 km east of the origin
 
-  // Perimeter escape: west out of the neighbourhood, then a long tertiary arc
-  // north and east, rejoining near the destination. ~9 km in total, with one
-  // sensor on the final arterial approach — even the long way is watched.
+  // Perimeter alternative: west out of the neighbourhood, then a long tertiary
+  // arc north and east, rejoining near the destination. ~9 km in total, with one
+  // sensor on the final arterial approach — even the long alternative carries one.
   const arc: GraphNode[] = [O];
   const arcPts: [number, number][] = [
     [-400, 0],
