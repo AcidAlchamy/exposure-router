@@ -24,8 +24,8 @@ export function allScenarios(): Scenario[] {
 }
 
 /**
- * The λ ladder, mirroring the spread the Anti-Flock Maps app probes in
- * production. Densified mid-range on purpose — see lambda-ladder's description
+ * The λ ladder: the spread of λ values a real application tries, from the plain
+ * shortest path up. Densified mid-range on purpose — see lambda-ladder's description
  * for the regression that motivates it.
  */
 export const LAMBDA_LADDER = [0, 200, 400, 700, 1000, 1500, 2200, 3000, 4000, 6000, 9000, 14000];
