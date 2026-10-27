@@ -35,7 +35,8 @@
     "dist",
     "src",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "NOTICE"
   ],
   "author": "AcidAlchamy"
 }

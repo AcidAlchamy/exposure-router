@@ -41,15 +41,15 @@ become one without changing the types. The fixtures ship synthetic sensors
 
 ## The model, honestly
 
-Older camera-avoidance routers treated each sensor as an **exclusion circle**: a
-disc the route may not enter. A circle is a wall. It blocks *every* road through
+The simplest way to route around sensors is to treat each one as an **exclusion
+circle**: a disc the route may not enter. A circle is a wall. It blocks *every* road through
 its disc, including the one that passes cleanly 80 m away, so the router keeps
 butting into a sensor whenever a slightly longer, genuinely cleaner street
 exists one block over. Worse, avoidance is all-or-nothing: moving 5 m further
 from a sensor is worth exactly zero until you cross the wall, at which point it
 is worth everything. There is no gradient for a search to follow.
 
-`exposure-router` replaces the wall with a **temperature**.
+`exposure-router` models each sensor as a **temperature** instead of a wall.
 
 1. **[`exposureField.ts`](src/exposureField.ts) — the heat model.** Every sensor
    radiates a continuous cost that is flat at 1.0 inside a ~30 m core read zone,
@@ -75,10 +75,9 @@ is worth everything. There is no gradient for a search to follow.
 3. **[`corridorSearch.ts`](src/corridorSearch.ts) — an experiment, honestly
    labelled.** A grid Dijkstra over the raw heat field, ignoring roads entirely,
    to find the coolest *corridor* across an area; it then simplifies that to a
-   few waypoints for a road router to snap to streets. It is **not used in the
-   Anti-Flock Maps production path** — the cost-surface router above is — and it
-   ships as a documented experiment because the idea is sound and worth building
-   on, not because it is finished.
+   few waypoints for a road router to snap to streets. **Anti-Flock Maps does not
+   use it.** It ships as a documented experiment because the idea is sound and
+   worth building on, not because it is finished.
 
 ### What it cannot do
 
@@ -119,9 +118,8 @@ const route = routeCostSurface(graph, field, start, goal, /* λ */ 2200);
 **Where do `nodes`, `edges`, and `cameras` come from? That is your problem, on
 purpose.** The library takes assembled geometry and returns routes; it never
 reads a database or a network. That seam is what keeps any real sensor dataset
-*out* of this package and private to its owner. Anti-Flock Maps builds the graph
-from an OpenStreetMap extract and the sensor list from its own vetted
-contribution pipeline — neither lives here.
+*out* of this package and private to its owner. Anti-Flock Maps supplies its own
+road graph and camera list; neither lives here.
 
 ## Fixtures
 
@@ -183,3 +181,6 @@ equipment. It is not an evasion tool, and contributions — code, comments, test
 issues, commit messages — are held to that line (see CONTRIBUTING). "How exposed
 is this route, and is there a comparable cleaner one" is a civic question with a
 checkable answer. That question, answered in the open, is the whole point.
+
+This project and Anti-Flock Maps are independent. They are not affiliated with,
+endorsed by or sponsored by Flock Safety or any other sensor vendor.
