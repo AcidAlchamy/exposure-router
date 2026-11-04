@@ -132,7 +132,19 @@ export class ExposureField {
   private readonly buckets = new Map<string, FieldCamera[]>();
   private readonly cellDeg: number;
 
+  /**
+   * Throws a RangeError for a camera with a non-finite latitude or longitude,
+   * or a non-finite (and non-null) facing, cone width or confidence: such a
+   * camera would otherwise be silently ignored, poison every heat value near
+   * it with NaN, or silently lose its facing.
+   */
   constructor(readonly cameras: FieldCamera[]) {
+    cameras.forEach((c, i) => {
+      const bad =
+        (["latitude", "longitude"] as const).find((k) => !Number.isFinite(c[k])) ??
+        (["directionDeg", "fovDeg", "confidenceScore"] as const).find((k) => c[k] != null && !Number.isFinite(c[k]));
+      if (bad) throw new RangeError(`ExposureField: camera ${i} has a non-finite ${bad} (${c[bad]})`);
+    });
     // Bucket size: roughly the influence radius in degrees, used for latitude
     // and longitude alike. East-west a bucket is narrower in metres (by
     // cos(latitude)), so heatAt works out how many buckets the radius spans
@@ -211,7 +223,8 @@ export interface RouteExposure {
 }
 
 /**
- * Integrate the exposure field along a route.
+ * Integrate the exposure field along a route. Throws a RangeError if any
+ * coordinate is not finite.
  *
  * Deliberately samples by DISTANCE, not by vertex. Route geometries have wildly
  * uneven vertex spacing — dense through turns, sparse on a straight highway — so
@@ -231,6 +244,10 @@ export function scoreRouteExposureField(route: RouteLine, field: ExposureField):
     const [aLng, aLat] = co[i]!;
     const [bLng, bLat] = co[i + 1]!;
     const segLen = metersBetween(aLng, aLat, bLng, bLat);
+    // NaN here would skip this segment and, through `carry`, every later one.
+    if (!(segLen >= 0)) {
+      throw new RangeError(`scoreRouteExposureField: non-finite coordinate in route vertices ${i}..${i + 1}`);
+    }
     if (segLen === 0) continue;
 
     // Walk this segment in SAMPLE_M steps, carrying the remainder across

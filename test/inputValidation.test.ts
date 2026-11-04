@@ -1,7 +1,7 @@
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
-import { buildGraph, nearestNode, routeCostSurface, type GraphEdge, type GraphNode } from "../src/graph.js";
-import { ExposureField, type FieldCamera } from "../src/exposureField.js";
+import { buildGraph, edgeExposure, nearestNode, routeCostSurface, type GraphEdge, type GraphNode } from "../src/graph.js";
+import { ExposureField, scoreRouteExposureField, type FieldCamera } from "../src/exposureField.js";
 import { M_PER_DEG, edgeBetween } from "../fixtures/scenario.js";
 
 // Bad input must produce a clear error — never a hang, a crash with an
@@ -124,5 +124,54 @@ describe("nearestNode input handling", () => {
     assert.equal(nearestNode(buildGraph([], []), LAT0, -115), null);
     assert.equal(nearestNode(graph, NaN, -115), null);
     assert.equal(nearestNode(graph, LAT0, Infinity), null);
+  });
+});
+
+describe("exposure input validation", () => {
+  const { nodes, edges, camera } = grid3();
+
+  for (const [field, value] of [
+    ["latitude", NaN],
+    ["longitude", Infinity],
+    ["confidenceScore", NaN],
+    ["directionDeg", NaN],
+    ["fovDeg", -Infinity],
+  ] as const) {
+    test(`a sensor with ${field} = ${value} is rejected`, () => {
+      // Before: a NaN position put the sensor in a bucket no lookup visits, so
+      // it was silently ignored; a NaN confidence made its heat NaN, which
+      // poisoned every edge in range (0→8 at λ=1000 returned null); a NaN
+      // facing or cone width silently behaved as omnidirectional.
+      assert.throws(() => new ExposureField([camera, { ...camera, [field]: value }]), {
+        name: "RangeError",
+        message: new RegExp(`camera 1 has a non-finite ${field}`),
+      });
+    });
+  }
+
+  test("null facing, cone width and confidence are accepted", () => {
+    const f = new ExposureField([{ ...camera, directionDeg: null, fovDeg: null, confidenceScore: null }]);
+    assert.ok(f.heatAt(camera.longitude, camera.latitude) > 0);
+  });
+
+  test("an edge whose geometry has a non-finite coordinate is rejected", () => {
+    // Before: a NaN segment length skipped the sampling loop and the NaN carry
+    // skipped every later segment, so the edge scored 0 reads even when it ran
+    // straight through a sensor.
+    const field = new ExposureField([camera]);
+    const bad: GraphEdge = { ...edges[3]!, geom: edges[3]!.geom.map(([lng, lat], i) => [i === 2 ? NaN : lng, lat]) };
+    assert.throws(() => edgeExposure(bad, field), { name: "RangeError", message: /non-finite coordinate/ });
+    const badEdges = edges.map((e, i) => (i === 3 ? bad : e));
+    assert.throws(() => routeCostSurface(buildGraph(nodes, badEdges), field, 0, 8, 0), {
+      name: "RangeError",
+      message: /non-finite coordinate/,
+    });
+  });
+
+  test("a route line with a non-finite coordinate is rejected", () => {
+    // Before: score, peak and exposedMeters all came back 0.
+    const field = new ExposureField([camera]);
+    const line = { geometry: { coordinates: [[camera.longitude, camera.latitude - 0.001], [NaN, camera.latitude + 0.001]] as [number, number][] } };
+    assert.throws(() => scoreRouteExposureField(line, field), { name: "RangeError", message: /non-finite coordinate/ });
   });
 });

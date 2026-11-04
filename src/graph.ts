@@ -93,7 +93,8 @@ const CORE_M = 30; // matches exposureField: crossing a core zone once ≈ 1 rea
  * Expected plate-reads accumulated by driving one edge — the integral of the
  * camera heat field along its geometry, in the same "reads" unit the rest of
  * the app scores in. Sampled by distance (not by vertex) so uneven vertex
- * spacing doesn't bias the estimate.
+ * spacing doesn't bias the estimate. Throws a RangeError if the geometry has a
+ * non-finite coordinate.
  */
 export function edgeExposure(edge: GraphEdge, field: ExposureField): number {
   const co = edge.geom;
@@ -104,6 +105,11 @@ export function edgeExposure(edge: GraphEdge, field: ExposureField): number {
     const [aLng, aLat] = co[i]!;
     const [bLng, bLat] = co[i + 1]!;
     const segLen = metersBetween(aLng, aLat, bLng, bLat);
+    // NaN here would skip this segment and, through `carry`, every later one,
+    // scoring the edge 0 reads whatever is near it.
+    if (!(segLen >= 0)) {
+      throw new RangeError(`edgeExposure: edge ${edge.a}→${edge.b} has a non-finite coordinate in geom[${i}..${i + 1}]`);
+    }
     if (segLen === 0) continue;
     let t = carry;
     while (t < segLen) {
