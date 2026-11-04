@@ -71,11 +71,11 @@
     },
     {
       "label": "60° N: 230 m east of a sensor",
-      "heat": 0
+      "heat": 0.047368866681481214
     },
     {
       "label": "60° N: 230 m west of a sensor",
-      "heat": 0
+      "heat": 0.047368866681481214
     }
   ],
   "lines": [

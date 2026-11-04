@@ -42,6 +42,13 @@ const BLIND_SIDE_FACTOR = 0.25;
 
 const R = 6371000;
 const toRad = Math.PI / 180;
+/** Metres per degree of latitude on the sphere metersBetween measures on. */
+const M_PER_DEG_LAT = R * toRad;
+/**
+ * Above this many buckets east-west (only within a few km of a pole), heatAt
+ * scans every camera instead of the index.
+ */
+const MAX_SPAN_CELLS = 64;
 
 export function metersBetween(
   aLng: number,
@@ -124,8 +131,10 @@ export class ExposureField {
   private readonly cellDeg: number;
 
   constructor(readonly cameras: FieldCamera[]) {
-    // Degrees of latitude per influence radius; longitude is narrower but using
-    // the latitude figure everywhere only makes buckets slightly generous.
+    // Bucket size: roughly the influence radius in degrees, used for latitude
+    // and longitude alike. East-west a bucket is narrower in metres (by
+    // cos(latitude)), so heatAt works out how many buckets the radius spans
+    // rather than assuming one in each direction.
     this.cellDeg = INFLUENCE_RADIUS_M / 111_320;
     for (const c of cameras) {
       const k = this.key(c.longitude, c.latitude);
@@ -139,14 +148,33 @@ export class ExposureField {
     return `${Math.floor(lat / this.cellDeg)}:${Math.floor(lng / this.cellDeg)}`;
   }
 
-  /** Total heat at a point — the sum over every camera that can see it. */
+  /**
+   * Total heat at a point — the sum over every camera that can see it.
+   *
+   * Visits every bucket that can hold a camera within INFLUENCE_RADIUS_M of
+   * the point. A degree of longitude shrinks with cos(latitude), so the
+   * east-west reach in degrees grows away from the equator (x1.24 at 36°, x2
+   * at 60°); it is taken at the poleward edge of the search band, where it is
+   * widest. (Visiting only the 3x3 neighbouring buckets missed cameras up to
+   * 50 m inside the radius due east or west at 36°, and far more at higher
+   * latitudes.)
+   */
   heatAt(lng: number, lat: number): number {
-    const ci = Math.floor(lat / this.cellDeg);
-    const cj = Math.floor(lng / this.cellDeg);
+    // 0.1% margin so floating-point rounding can never drop a camera at the rim.
+    const reachLat = (INFLUENCE_RADIUS_M / M_PER_DEG_LAT) * 1.001;
+    const reachLng = reachLat / Math.cos(Math.min(90, Math.abs(lat) + reachLat) * toRad);
+    const i0 = Math.floor((lat - reachLat) / this.cellDeg);
+    const i1 = Math.floor((lat + reachLat) / this.cellDeg);
+    const j0 = Math.floor((lng - reachLng) / this.cellDeg);
+    const j1 = Math.floor((lng + reachLng) / this.cellDeg);
     let total = 0;
-    for (let di = -1; di <= 1; di++) {
-      for (let dj = -1; dj <= 1; dj++) {
-        const arr = this.buckets.get(`${ci + di}:${cj + dj}`);
+    if (j1 - j0 > MAX_SPAN_CELLS) {
+      for (const cam of this.cameras) total += cameraHeatAt(cam, lng, lat);
+      return total;
+    }
+    for (let i = i0; i <= i1; i++) {
+      for (let j = j0; j <= j1; j++) {
+        const arr = this.buckets.get(`${i}:${j}`);
         if (!arr) continue;
         for (const cam of arr) total += cameraHeatAt(cam, lng, lat);
       }

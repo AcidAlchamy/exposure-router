@@ -122,7 +122,7 @@ judged λ. Numbers come straight from the committed
 | Scenario | Expected reads, shortest → routed | Distance added | Read zones crossed |
 |---|---|---|---|
 | `parallel-street` | 4.83 → **0.01** | +480 m | 1 → **0** |
-| `saturated-downtown` | 16.40 → **5.01** | +1.6 km | 3 → **0** |
+| `saturated-downtown` | 16.41 → **5.01** | +1.6 km | 3 → **0** |
 | `downtown-lv` (real roads) | 16.34 → **0.43** | +1.66 km | 5 → **0** |
 | `parking-lot-temptation` | 0 → 0 | 0 m, and 0 m of service roads | 0 → 0 |
 | `flanked-exit` | 9.41 → 9.41 | 0 m | 2 → 2, *on purpose* |

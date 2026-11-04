@@ -1,6 +1,6 @@
 {
   "name": "corridor",
-  "totalEdgeReads": 167.0725178066578,
+  "totalEdgeReads": 167.07251788729192,
   "trips": [
     {
       "label": "row 0 west to row 2 east, λ=0",
@@ -11,7 +11,7 @@
         "path": [0, 12, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35],
         "edges": [1, 24, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56],
         "distanceMeters": 2699.8746912717666,
-        "reads": 51.19518667799253,
+        "reads": 51.195186723110936,
         "cost": 2834.868425835354,
         "geometryPoints": 137,
         "geometryFirst": [-115, 36],

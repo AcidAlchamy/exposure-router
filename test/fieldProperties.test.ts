@@ -98,6 +98,40 @@ describe("exposure field properties", () => {
     });
   });
 
+  test("the field's heat at a point is the sum of every sensor's heat there", () => {
+    // ExposureField indexes sensors in buckets; the index must never drop one
+    // that is in range. Probes cluster near the influence radius on purpose.
+    forAll("spatial index", 400, (rng) => {
+      const lat0 = rng.pick([...LATITUDES, 75, -85]);
+      const lng0 = rng.float(-179, 179);
+      const cams = Array.from({ length: rng.int(1, 30) }, () => randomCamera(rng, lat0, lng0, 700));
+      const field = new ExposureField(cams);
+      for (let k = 0; k < 40; k++) {
+        const near = rng.pick(cams);
+        const p = rng.chance(0.7)
+          ? destination(near.latitude, near.longitude, rng.float(0, 360), rng.float(INFLUENCE_RADIUS_M - 60, INFLUENCE_RADIUS_M))
+          : offset(lat0, lng0, rng.float(0, 360), rng.float(0, 900));
+        let expected = 0;
+        for (const c of cams) expected += cameraHeatAt(c, p.lng, p.lat);
+        const got = field.heatAt(p.lng, p.lat);
+        assert.ok(close(got, expected, 1e-12, 1e-12), `heatAt ${got} vs Σ ${expected} at lat ${p.lat.toFixed(4)}`);
+      }
+    });
+  });
+
+  test("a sensor 230 m due east or west is counted, at 36° N and at 60° N", () => {
+    for (const lat of [36, 60]) {
+      const cam: FieldCamera = { latitude: lat, longitude: -115, directionDeg: null, fovDeg: null, confidenceScore: 1 };
+      const field = new ExposureField([cam]);
+      for (const bearing of [90, 270]) {
+        const p = destination(lat, -115, bearing, 230);
+        const one = cameraHeatAt(cam, p.lng, p.lat);
+        assert.ok(one > 0.01, `expected real heat at 230 m, got ${one}`);
+        assert.equal(field.heatAt(p.lng, p.lat), one, `lat ${lat}, bearing ${bearing}`);
+      }
+    }
+  });
+
   test("adding a sensor never lowers the heat anywhere", () => {
     forAll("added sensor heat", 300, (rng) => {
       const lat0 = rng.pick(LATITUDES);
