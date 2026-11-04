@@ -1,0 +1,173 @@
+{
+  "name": "snap",
+  "points": [
+    {
+      "label": "p0",
+      "node": 55
+    },
+    {
+      "label": "p1",
+      "node": 66
+    },
+    {
+      "label": "p2",
+      "node": 58
+    },
+    {
+      "label": "p3",
+      "node": 50
+    },
+    {
+      "label": "p4",
+      "node": 46
+    },
+    {
+      "label": "p5",
+      "node": 84
+    },
+    {
+      "label": "p6",
+      "node": 64
+    },
+    {
+      "label": "p7",
+      "node": 16
+    },
+    {
+      "label": "p8",
+      "node": 21
+    },
+    {
+      "label": "p9",
+      "node": 34
+    },
+    {
+      "label": "p10",
+      "node": 15
+    },
+    {
+      "label": "p11",
+      "node": 56
+    },
+    {
+      "label": "p12",
+      "node": 84
+    },
+    {
+      "label": "p13",
+      "node": 77
+    },
+    {
+      "label": "p14",
+      "node": 53
+    },
+    {
+      "label": "p15",
+      "node": 2
+    },
+    {
+      "label": "p16",
+      "node": 97
+    },
+    {
+      "label": "p17",
+      "node": 13
+    },
+    {
+      "label": "p18",
+      "node": 37
+    },
+    {
+      "label": "p19",
+      "node": 55
+    },
+    {
+      "label": "p20",
+      "node": 18
+    },
+    {
+      "label": "p21",
+      "node": 88
+    },
+    {
+      "label": "p22",
+      "node": 3
+    },
+    {
+      "label": "p23",
+      "node": 80
+    },
+    {
+      "label": "p24",
+      "node": 55
+    },
+    {
+      "label": "p25",
+      "node": 42
+    },
+    {
+      "label": "p26",
+      "node": 7
+    },
+    {
+      "label": "p27",
+      "node": 6
+    },
+    {
+      "label": "p28",
+      "node": 64
+    },
+    {
+      "label": "p29",
+      "node": 49
+    },
+    {
+      "label": "p30",
+      "node": 34
+    },
+    {
+      "label": "p31",
+      "node": 70
+    },
+    {
+      "label": "p32",
+      "node": 74
+    },
+    {
+      "label": "p33",
+      "node": 52
+    },
+    {
+      "label": "p34",
+      "node": 83
+    },
+    {
+      "label": "p35",
+      "node": 11
+    },
+    {
+      "label": "p36",
+      "node": 66
+    },
+    {
+      "label": "p37",
+      "node": 31
+    },
+    {
+      "label": "p38",
+      "node": 93
+    },
+    {
+      "label": "p39",
+      "node": 68
+    },
+    {
+      "label": "2 km north of the grid",
+      "node": 90
+    },
+    {
+      "label": "2 km east of the grid",
+      "node": 39
+    }
+  ]
+}

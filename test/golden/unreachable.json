@@ -1,0 +1,49 @@
+{
+  "name": "unreachable",
+  "trips": [
+    {
+      "label": "goal in another component",
+      "start": 0,
+      "goal": 100,
+      "lambda": 0,
+      "result": null
+    },
+    {
+      "label": "into the one-way spur (allowed)",
+      "start": 0,
+      "goal": 200,
+      "lambda": 0,
+      "result": {
+        "path": [0, 3, 6, 7, 8, 200],
+        "edges": [1, 6, 10, 11, 16],
+        "distanceMeters": 499.9931651997478,
+        "reads": 0,
+        "cost": 524.9928234597352,
+        "geometryPoints": 28,
+        "geometryFirst": [-115, 36],
+        "geometryLast": [-114.9966688789683, 36.001796622349985]
+      }
+    },
+    {
+      "label": "out of the one-way spur (against the one-way)",
+      "start": 200,
+      "goal": 0,
+      "lambda": 0,
+      "result": null
+    },
+    {
+      "label": "unknown start id",
+      "start": 999,
+      "goal": 0,
+      "lambda": 0,
+      "result": null
+    },
+    {
+      "label": "unknown goal id",
+      "start": 0,
+      "goal": 999,
+      "lambda": 0,
+      "result": null
+    }
+  ]
+}

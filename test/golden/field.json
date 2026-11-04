@@ -1,0 +1,118 @@
+{
+  "name": "field",
+  "points": [
+    {
+      "label": "omni: on the sensor",
+      "heat": 1
+    },
+    {
+      "label": "omni: 15 m north (core)",
+      "heat": 1
+    },
+    {
+      "label": "omni: 30 m east (core edge)",
+      "heat": 1
+    },
+    {
+      "label": "omni: 100 m south",
+      "heat": 0.7791194896737649
+    },
+    {
+      "label": "omni: 200 m west",
+      "heat": 0.1697845703447236
+    },
+    {
+      "label": "omni: 259 m north",
+      "heat": 0.00009416492110458918
+    },
+    {
+      "label": "omni: 261 m north (out of range)",
+      "heat": 0
+    },
+    {
+      "label": "omni: 230 m east",
+      "heat": 0.04736886658746431
+    },
+    {
+      "label": "omni: 245 m west",
+      "heat": 0.01264665753068861
+    },
+    {
+      "label": "cone: 100 m north (in cone)",
+      "heat": 0.5259056555297913
+    },
+    {
+      "label": "cone: 100 m south (blind side)",
+      "heat": 0.13147641388244782
+    },
+    {
+      "label": "cone: 100 m at 45° (taper)",
+      "heat": 0.3944355133904399
+    },
+    {
+      "label": "cone: 100 m east (beside)",
+      "heat": 0.13147641388321687
+    },
+    {
+      "label": "low confidence: 50 m north",
+      "heat": 0.46979852536877015
+    },
+    {
+      "label": "default cone: 100 m east (in cone)",
+      "heat": 0.7284767228492313
+    },
+    {
+      "label": "default cone: 100 m north (outside)",
+      "heat": 0.18211918071124256
+    },
+    {
+      "label": "between two sensors",
+      "heat": 0
+    },
+    {
+      "label": "60° N: 230 m east of a sensor",
+      "heat": 0
+    },
+    {
+      "label": "60° N: 230 m west of a sensor",
+      "heat": 0
+    }
+  ],
+  "lines": [
+    {
+      "label": "straight past the omni sensor at 20 m",
+      "score": 4.778389326552212,
+      "peak": 1,
+      "exposedMeters": 500,
+      "edgeExposure": 4.778389326552212
+    },
+    {
+      "label": "straight past the omni sensor, many vertices",
+      "score": 4.778389329128108,
+      "peak": 1,
+      "exposedMeters": 500,
+      "edgeExposure": 4.778389329128108
+    },
+    {
+      "label": "in front of then behind the cone sensor",
+      "score": 1.9189667326646531,
+      "peak": 0.31624336140373027,
+      "exposedMeters": 700,
+      "edgeExposure": 1.9189667326646531
+    },
+    {
+      "label": "far from every sensor",
+      "score": 0,
+      "peak": 0,
+      "exposedMeters": 0,
+      "edgeExposure": 0
+    },
+    {
+      "label": "single point",
+      "score": 0,
+      "peak": 0,
+      "exposedMeters": 0,
+      "edgeExposure": 0
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "name": "start-equals-goal",
+  "trips": [
+    {
+      "label": "centre to itself (on the sensor), λ=0",
+      "start": 4,
+      "goal": 4,
+      "lambda": 0,
+      "result": {
+        "path": [4],
+        "edges": [],
+        "distanceMeters": 0,
+        "reads": 0,
+        "cost": 0,
+        "geometryPoints": 0,
+        "geometryFirst": null,
+        "geometryLast": null
+      }
+    },
+    {
+      "label": "centre to itself (on the sensor), λ=1000",
+      "start": 4,
+      "goal": 4,
+      "lambda": 1000,
+      "result": {
+        "path": [4],
+        "edges": [],
+        "distanceMeters": 0,
+        "reads": 0,
+        "cost": 0,
+        "geometryPoints": 0,
+        "geometryFirst": null,
+        "geometryLast": null
+      }
+    },
+    {
+      "label": "corner to itself, λ=0",
+      "start": 0,
+      "goal": 0,
+      "lambda": 0,
+      "result": {
+        "path": [0],
+        "edges": [],
+        "distanceMeters": 0,
+        "reads": 0,
+        "cost": 0,
+        "geometryPoints": 0,
+        "geometryFirst": null,
+        "geometryLast": null
+      }
+    }
+  ]
+}

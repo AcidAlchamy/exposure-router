@@ -1,0 +1,101 @@
+{
+  "name": "ties",
+  "trips": [
+    {
+      "label": "parallel edges",
+      "start": 1,
+      "goal": 2,
+      "lambda": 0,
+      "result": {
+        "path": [1, 2],
+        "edges": [0],
+        "distanceMeters": 199.9999999998086,
+        "reads": 0,
+        "cost": 209.99999999979906,
+        "geometryPoints": 11,
+        "geometryFirst": [-115, 36],
+        "geometryLast": [-114.99777925264553, 36]
+      }
+    },
+    {
+      "label": "parallel edges, reversed",
+      "start": 2,
+      "goal": 1,
+      "lambda": 0,
+      "result": {
+        "path": [2, 1],
+        "edges": [0],
+        "distanceMeters": 199.9999999998086,
+        "reads": 0,
+        "cost": 209.99999999979906,
+        "geometryPoints": 11,
+        "geometryFirst": [-114.99777925264553, 36],
+        "geometryLast": [-115, 36]
+      }
+    },
+    {
+      "label": "coincident diamond",
+      "start": 10,
+      "goal": 13,
+      "lambda": 0,
+      "result": {
+        "path": [10, 11, 13],
+        "edges": [2, 4],
+        "distanceMeters": 282.8257961572634,
+        "reads": 0,
+        "cost": 296.96708596512667,
+        "geometryPoints": 17,
+        "geometryFirst": [-115, 36.00898311174991],
+        "geometryLast": [-114.99777925264553, 36.00898311174991]
+      }
+    },
+    {
+      "label": "coincident diamond, reversed",
+      "start": 13,
+      "goal": 10,
+      "lambda": 0,
+      "result": {
+        "path": [13, 11, 10],
+        "edges": [4, 2],
+        "distanceMeters": 282.8257961572634,
+        "reads": 0,
+        "cost": 296.96708596512667,
+        "geometryPoints": 17,
+        "geometryFirst": [-114.99777925264553, 36.00898311174991],
+        "geometryLast": [-115, 36.00898311174991]
+      }
+    },
+    {
+      "label": "mirrored diamond",
+      "start": 20,
+      "goal": 23,
+      "lambda": 0,
+      "result": {
+        "path": [20, 21, 23],
+        "edges": [6, 8],
+        "distanceMeters": 282.80968276234745,
+        "reads": 0,
+        "cost": 296.95016690046486,
+        "geometryPoints": 17,
+        "geometryFirst": [-115, 36.01796622349982],
+        "geometryLast": [-114.99777925264553, 36.01796622349982]
+      }
+    },
+    {
+      "label": "mirrored diamond, reversed",
+      "start": 23,
+      "goal": 20,
+      "lambda": 0,
+      "result": {
+        "path": [23, 21, 20],
+        "edges": [8, 6],
+        "distanceMeters": 282.80968276234745,
+        "reads": 0,
+        "cost": 296.95016690046486,
+        "geometryPoints": 17,
+        "geometryFirst": [-114.99777925264553, 36.01796622349982],
+        "geometryLast": [-115, 36.01796622349982]
+      }
+    }
+  ]
+}

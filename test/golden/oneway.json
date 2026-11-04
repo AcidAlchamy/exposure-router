@@ -1,0 +1,37 @@
+{
+  "name": "oneway",
+  "trips": [
+    {
+      "label": "A to C (with the one-way)",
+      "start": 0,
+      "goal": 2,
+      "lambda": 0,
+      "result": {
+        "path": [0, 2],
+        "edges": [2],
+        "distanceMeters": 150,
+        "reads": 0,
+        "cost": 157.5,
+        "geometryPoints": 11,
+        "geometryFirst": [-115, 36],
+        "geometryLast": [-114.99777925264553, 36]
+      }
+    },
+    {
+      "label": "C to A (against the one-way)",
+      "start": 2,
+      "goal": 0,
+      "lambda": 0,
+      "result": {
+        "path": [2, 1, 0],
+        "edges": [1, 0],
+        "distanceMeters": 199.9999999998086,
+        "reads": 0,
+        "cost": 209.99999999979906,
+        "geometryPoints": 11,
+        "geometryFirst": [-114.99777925264553, 36],
+        "geometryLast": [-115, 36]
+      }
+    }
+  ]
+}

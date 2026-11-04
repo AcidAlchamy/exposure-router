@@ -8,8 +8,11 @@ import { ExposureField, metersBetween } from "./exposureField.js";
  * (parking aisles, alleys, drive-throughs) stay usable, because sometimes the
  * genuinely quiet path IS the back of a lot — but at 2.6x they never win on
  * convenience alone.
+ *
+ * Exported so the test harness can recompute a route's cost; it is not
+ * re-exported from the package index.
  */
-function classWeight(hw?: string): number {
+export function classWeight(hw?: string): number {
   switch (hw) {
     case "service":
       return 2.6;
