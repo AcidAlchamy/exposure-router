@@ -74,13 +74,25 @@ describe("exposure field properties", () => {
       const cam = randomCamera(rng, lat0, -115, 0);
       const bearing = rng.float(0, 360);
       let prev = Infinity;
-      for (let m = 1; m <= 280; m += 7) {
-        const p = destination(cam.latitude, cam.longitude, bearing, m);
+      for (let m = 0; m <= 280; m += 7) {
+        // m = 0 is the sensor's own position, exactly.
+        const p = m === 0 ? { lat: cam.latitude, lng: cam.longitude } : destination(cam.latitude, cam.longitude, bearing, m);
         const h = cameraHeatAt(cam, p.lng, p.lat);
         assert.ok(h <= prev + 1e-7, `heat rose from ${prev} to ${h} at ${m} m`);
         prev = h;
       }
     });
+  });
+
+  test("a directional sensor's own position gets full heat whichever way it faces", () => {
+    // Regression: the bearing from a sensor to its own position is undefined
+    // (atan2(0, 0) = 0, due north), so a sensor facing away from north used
+    // to give its own position blind-side heat — every edge leaving a node
+    // with a sensor on it started with an under-counted sample.
+    for (const directionDeg of [0, 90, 180, 270]) {
+      const cam: FieldCamera = { latitude: 36, longitude: -115, directionDeg, fovDeg: 60, confidenceScore: 1 };
+      assert.equal(cameraHeatAt(cam, -115, 36), 1, `facing ${directionDeg}°`);
+    }
   });
 
   test("more confidence never means less heat, and outside the cone is never hotter than inside", () => {

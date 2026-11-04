@@ -102,7 +102,9 @@ export function cameraHeatAt(cam: FieldCamera, lng: number, lat: number): number
     heat = 1 - t * t * (3 - 2 * t);
   }
 
-  if (cam.directionDeg != null) {
+  // At the sensor's own position there is no bearing to compare with its
+  // facing (atan2(0, 0) would read as due north), so no cone reduction applies.
+  if (cam.directionDeg != null && d > 0) {
     const half = (cam.fovDeg ?? DEFAULT_FOV_DEG) / 2;
     const off = angleDiff(bearingDeg(cam.longitude, cam.latitude, lng, lat), cam.directionDeg);
     if (off > half) {
