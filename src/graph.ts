@@ -250,12 +250,20 @@ export function routeCostSurface(
   return { geometry, distanceMeters, reads, path: nodePath };
 }
 
-/** Nearest graph node to a point (linear scan; the per-trip subgraph is small). */
+/**
+ * Nearest graph node to a point by ground distance (linear scan; the per-trip
+ * subgraph is small). Ties go to the node listed first. Returns null for an
+ * empty graph or a non-finite point.
+ *
+ * Distance is measured in metres, not in raw degrees: away from the equator a
+ * degree of longitude is shorter than a degree of latitude (by cos(latitude)),
+ * so comparing degrees would favour north-south neighbours.
+ */
 export function nearestNode(graph: BuiltGraph, lat: number, lng: number): number | null {
   let best: number | null = null;
   let bestD = Infinity;
   for (const n of graph.nodes.values()) {
-    const d = (n.lat - lat) ** 2 + (n.lng - lng) ** 2;
+    const d = metersBetween(n.lng, n.lat, lng, lat);
     if (d < bestD) {
       bestD = d;
       best = n.id;

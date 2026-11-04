@@ -350,6 +350,31 @@ describe("nearestNode properties", () => {
     });
   });
 
+  test("returns a node at the smallest ground distance from the point", () => {
+    forAll("snap nearest", 300, (rng) => {
+      const map = mediumMap(rng);
+      const graph = buildGraph(map.nodes, map.edges);
+      const anchor = rng.pick(map.nodes);
+      const lat = anchor.lat + rng.float(-0.01, 0.01);
+      const lng = anchor.lng + rng.float(-0.01, 0.01);
+      const got = graph.nodes.get(nearestNode(graph, lat, lng)!)!;
+      const dGot = metersBetween(got.lng, got.lat, lng, lat);
+      for (const n of map.nodes) {
+        const d = metersBetween(n.lng, n.lat, lng, lat);
+        assert.ok(dGot <= d, `snapped to node ${got.id} at ${dGot.toFixed(2)} m, but node ${n.id} is ${d.toFixed(2)} m away`);
+      }
+    });
+  });
+
+  test("prefers a node 100 m east over one 105 m north (36° N)", () => {
+    // Regression: comparing raw degrees made 100 m of longitude at 36° N look
+    // like 124 m, so the farther northern node won.
+    const lat0 = 36;
+    const east: GraphNode = { id: 1, lat: lat0, lng: -115 + 100 / (111_320 * Math.cos((lat0 * Math.PI) / 180)) };
+    const north: GraphNode = { id: 2, lat: lat0 + 105 / 111_320, lng: -115 };
+    assert.equal(nearestNode(buildGraph([east, north], []), lat0, -115), 1);
+  });
+
   test("a point exactly on a node snaps to a node at that position", () => {
     forAll("snap exact", 200, (rng) => {
       const map = mediumMap(rng);
