@@ -1,5 +1,6 @@
 {
   "name": "downtown-lv",
+  "totalEdgeReads": 348.76108786818565,
   "trips": [
     {
       "label": "fixture trip, λ=0",

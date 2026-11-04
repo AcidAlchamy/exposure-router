@@ -1,5 +1,6 @@
 {
   "name": "start-equals-goal",
+  "totalEdgeReads": 15.483353814184712,
   "trips": [
     {
       "label": "centre to itself (on the sensor), λ=0",

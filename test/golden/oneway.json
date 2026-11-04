@@ -1,5 +1,6 @@
 {
   "name": "oneway",
+  "totalEdgeReads": 0,
   "trips": [
     {
       "label": "A to C (with the one-way)",

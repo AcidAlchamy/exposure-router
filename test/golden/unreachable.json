@@ -1,5 +1,6 @@
 {
   "name": "unreachable",
+  "totalEdgeReads": 0,
   "trips": [
     {
       "label": "goal in another component",

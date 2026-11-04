@@ -28,8 +28,13 @@ export function runCase(c: GoldenCase): Json {
       const graph = buildGraph(c.nodes, c.edges);
       const field = new ExposureField(c.cameras);
       const reads = edgeReadsFor(graph, field);
+      let totalEdgeReads = 0;
+      for (const r of reads) totalEdgeReads += r;
       return {
         name: c.name,
+        // Σ edgeExposure over every edge: moves when the field changes anywhere
+        // on the map, not only along the recorded routes.
+        totalEdgeReads: num(totalEdgeReads),
         trips: c.trips.map((t) => {
           const r = routeCostSurface(graph, field, t.start, t.goal, t.lambda);
           if (!r) return { label: t.label, start: t.start, goal: t.goal, lambda: t.lambda, result: null };

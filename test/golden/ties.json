@@ -1,5 +1,6 @@
 {
   "name": "ties",
+  "totalEdgeReads": 0,
   "trips": [
     {
       "label": "parallel edges",

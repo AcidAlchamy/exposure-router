@@ -1,5 +1,6 @@
 {
   "name": "corridor",
+  "totalEdgeReads": 167.0725178066578,
   "trips": [
     {
       "label": "row 0 west to row 2 east, λ=0",

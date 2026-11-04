@@ -1,5 +1,6 @@
 {
   "name": "high-latitude",
+  "totalEdgeReads": 23.92367269320889,
   "trips": [
     {
       "label": "west to east, λ=0",

@@ -1,5 +1,6 @@
 {
   "name": "cone-sensor",
+  "totalEdgeReads": 9.839176284370243,
   "trips": [
     {
       "label": "west to east, λ=0",

@@ -1,5 +1,6 @@
 {
   "name": "single-sensor",
+  "totalEdgeReads": 24.805756431123747,
   "trips": [
     {
       "label": "west to east through the centre row, λ=0",

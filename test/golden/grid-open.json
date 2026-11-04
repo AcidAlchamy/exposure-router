@@ -1,5 +1,6 @@
 {
   "name": "grid-open",
+  "totalEdgeReads": 0,
   "trips": [
     {
       "label": "SW to NE, λ=0",

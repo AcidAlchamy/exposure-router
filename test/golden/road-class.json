@@ -1,5 +1,6 @@
 {
   "name": "road-class",
+  "totalEdgeReads": 0,
   "trips": [
     {
       "label": "300 m service vs 500 m residential",
