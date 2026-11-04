@@ -52,7 +52,9 @@ export interface CorridorResult {
 /**
  * Find the lowest-exposure corridor from `from` to `to` and return waypoints
  * that describe it. Returns null when the grid would be too large or no path
- * exists (the caller then just keeps its road-router candidates).
+ * exists (the caller then just keeps its road-router candidates). Throws a
+ * RangeError when metersPerRead is not a finite number >= 0 or an endpoint is
+ * not finite.
  */
 export function findCoolCorridor(
   from: LatLng,
@@ -60,6 +62,16 @@ export function findCoolCorridor(
   field: ExposureField,
   opts: CorridorOptions,
 ): CorridorResult | null {
+  // NaN or Infinity would make step costs NaN and read as "no corridor"; a
+  // negative rate makes them negative, which Dijkstra cannot handle.
+  if (!(Number.isFinite(opts.metersPerRead) && opts.metersPerRead >= 0)) {
+    throw new RangeError(`findCoolCorridor: metersPerRead must be a finite number >= 0, got ${opts.metersPerRead}`);
+  }
+  for (const p of [from, to]) {
+    if (!Number.isFinite(p.lat) || !Number.isFinite(p.lng)) {
+      throw new RangeError(`findCoolCorridor: endpoint (${p.lat}, ${p.lng}) is non-finite`);
+    }
+  }
   const latPad = PAD_M / 111_320;
   const midLat = (from.lat + to.lat) / 2;
   const lngPad = PAD_M / (111_320 * Math.max(0.2, Math.cos(midLat * (Math.PI / 180))));

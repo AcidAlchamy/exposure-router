@@ -2,6 +2,7 @@ import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import { buildGraph, edgeExposure, nearestNode, routeCostSurface, type GraphEdge, type GraphNode } from "../src/graph.js";
 import { ExposureField, scoreRouteExposureField, type FieldCamera } from "../src/exposureField.js";
+import { findCoolCorridor } from "../src/corridorSearch.js";
 import { M_PER_DEG, edgeBetween } from "../fixtures/scenario.js";
 
 // Bad input must produce a clear error — never a hang, a crash with an
@@ -173,5 +174,40 @@ describe("exposure input validation", () => {
     const field = new ExposureField([camera]);
     const line = { geometry: { coordinates: [[camera.longitude, camera.latitude - 0.001], [NaN, camera.latitude + 0.001]] as [number, number][] } };
     assert.throws(() => scoreRouteExposureField(line, field), { name: "RangeError", message: /non-finite coordinate/ });
+  });
+});
+
+describe("findCoolCorridor input validation", () => {
+  const { camera } = grid3();
+  const field = new ExposureField([camera]);
+  const from = { lat: LAT0, lng: -115 };
+  const to = { lat: LAT0 + 0.01, lng: -114.99 };
+
+  for (const metersPerRead of [NaN, Infinity, -1000]) {
+    test(`metersPerRead = ${metersPerRead} is rejected`, () => {
+      // Before: NaN and Infinity returned null ("no corridor") on an open
+      // grid; a negative rate made step costs negative inside Dijkstra.
+      assert.throws(() => findCoolCorridor(from, to, field, { metersPerRead }), {
+        name: "RangeError",
+        message: /metersPerRead must be a finite number >= 0/,
+      });
+    });
+  }
+
+  test("a non-finite endpoint is rejected", () => {
+    // Before: the grid size came out NaN and the call returned null.
+    assert.throws(() => findCoolCorridor({ lat: NaN, lng: -115 }, to, field, { metersPerRead: 1000 }), {
+      name: "RangeError",
+      message: /non-finite/,
+    });
+    assert.throws(() => findCoolCorridor(from, { lat: LAT0, lng: Infinity }, field, { metersPerRead: 1000 }), {
+      name: "RangeError",
+      message: /non-finite/,
+    });
+  });
+
+  test("the documented null cases still return null", () => {
+    assert.equal(findCoolCorridor(from, from, field, { metersPerRead: 1000 }), null);
+    assert.equal(findCoolCorridor(from, { lat: 40, lng: -110 }, field, { metersPerRead: 1000 }), null);
   });
 });
