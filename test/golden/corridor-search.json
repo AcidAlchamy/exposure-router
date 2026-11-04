@@ -1,0 +1,57 @@
+{
+  "name": "corridor-search",
+  "trips": [
+    {
+      "label": "west to east, metersPerRead=0",
+      "metersPerRead": 0,
+      "result": {
+        "waypoints": [
+          [36.00916277398491, -114.9962242993576],
+          [36.00916277398491, -114.992670698753],
+          [36.00916277398491, -114.9891170981484],
+          [36.00916277398491, -114.98556349754378]
+        ],
+        "gridScore": 12.444423761800863,
+        "cellsExplored": 1372
+      }
+    },
+    {
+      "label": "west to east, metersPerRead=1500",
+      "metersPerRead": 1500,
+      "result": {
+        "waypoints": [
+          [36.01634926338484, -114.99977789996221],
+          [36.018505210204815, -114.99711269950876],
+          [36.018505210204815, -114.98112149678802],
+          [36.01706791232483, -114.97934469648573]
+        ],
+        "gridScore": 0.3018079857574776,
+        "cellsExplored": 4098
+      }
+    },
+    {
+      "label": "west to east, metersPerRead=5000",
+      "metersPerRead": 5000,
+      "result": {
+        "waypoints": [
+          [36.01634926338484, -114.99977789996221],
+          [36.018505210204815, -114.99711269950876],
+          [36.018505210204815, -114.98112149678802],
+          [36.01706791232483, -114.97934469648573]
+        ],
+        "gridScore": 0.3018079857574776,
+        "cellsExplored": 4838
+      }
+    },
+    {
+      "label": "from equals to",
+      "metersPerRead": 1500,
+      "result": null
+    },
+    {
+      "label": "trip too large for the grid",
+      "metersPerRead": 1500,
+      "result": null
+    }
+  ]
+}

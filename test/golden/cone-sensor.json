@@ -1,0 +1,70 @@
+{
+  "name": "cone-sensor",
+  "totalEdgeReads": 10.27417628437024,
+  "trips": [
+    {
+      "label": "west to east, λ=0",
+      "start": 21,
+      "goal": 27,
+      "lambda": 0,
+      "result": {
+        "path": [21, 22, 23, 24, 25, 26, 27],
+        "edges": [39, 41, 43, 45, 47, 49],
+        "distanceMeters": 599.9794953771585,
+        "reads": 2.7393952984169876,
+        "cost": 629.9784701460165,
+        "geometryPoints": 31,
+        "geometryFirst": [-115, 36.00269493352497],
+        "geometryLast": [-114.99333775793659, 36.00269493352497]
+      }
+    },
+    {
+      "label": "west to east, λ=1000",
+      "start": 21,
+      "goal": 27,
+      "lambda": 1000,
+      "result": {
+        "path": [21, 28, 35, 36, 37, 38, 39, 40, 41, 34, 27],
+        "edges": [40, 53, 65, 67, 69, 71, 73, 75, 64, 51],
+        "distanceMeters": 999.9658248923195,
+        "reads": 0.12101691587467837,
+        "cost": 1170.9810320116137,
+        "geometryPoints": 55,
+        "geometryFirst": [-115, 36.00269493352497],
+        "geometryLast": [-114.99333775793659, 36.00269493352497]
+      }
+    },
+    {
+      "label": "south to north, λ=1000",
+      "start": 3,
+      "goal": 45,
+      "lambda": 1000,
+      "result": {
+        "path": [3, 2, 1, 8, 15, 22, 29, 36, 43, 44, 45],
+        "edges": [4, 2, 3, 16, 29, 42, 55, 68, 79, 80],
+        "distanceMeters": 999.9863298093388,
+        "reads": 0.10849864040885014,
+        "cost": 1158.4842867086559,
+        "geometryPoints": 56,
+        "geometryFirst": [-114.9966688789683, 36],
+        "geometryLast": [-114.9966688789683, 36.00538986704995]
+      }
+    },
+    {
+      "label": "west half only, λ=1000",
+      "start": 0,
+      "goal": 44,
+      "lambda": 1000,
+      "result": {
+        "path": [0, 7, 14, 21, 28, 35, 42, 43, 44],
+        "edges": [1, 14, 27, 40, 53, 66, 78, 79],
+        "distanceMeters": 799.9863298095302,
+        "reads": 0,
+        "cost": 839.9856463000067,
+        "geometryPoints": 46,
+        "geometryFirst": [-115, 36],
+        "geometryLast": [-114.99777925264553, 36.00538986704995]
+      }
+    }
+  ]
+}

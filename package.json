@@ -15,8 +15,10 @@
     "build": "tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "node --import tsx --test test/costSurface.test.ts test/metrics.test.ts",
-    "bench": "node --import tsx bench/run.ts"
+    "test": "node --import tsx --test test/costSurface.test.ts test/metrics.test.ts test/golden.test.ts test/routerProperties.test.ts test/fieldProperties.test.ts test/corridorProperties.test.ts test/inputValidation.test.ts test/readme.test.ts",
+    "bench": "node --import tsx bench/run.ts",
+    "bench:perf": "node --expose-gc --import tsx bench/perf.ts",
+    "golden:update": "node --import tsx test/support/updateGolden.ts"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",

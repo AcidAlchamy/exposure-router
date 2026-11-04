@@ -1,0 +1,70 @@
+{
+  "name": "corridor",
+  "totalEdgeReads": 167.07251788729192,
+  "trips": [
+    {
+      "label": "row 0 west to row 2 east, λ=0",
+      "start": 0,
+      "goal": 35,
+      "lambda": 0,
+      "result": {
+        "path": [0, 12, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35],
+        "edges": [1, 24, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56],
+        "distanceMeters": 2699.8746912717666,
+        "reads": 51.195186723110936,
+        "cost": 2834.868425835354,
+        "geometryPoints": 137,
+        "geometryFirst": [-115, 36],
+        "geometryLast": [-114.97557177910079, 36.00449155587496]
+      }
+    },
+    {
+      "label": "row 0 west to row 2 east, λ=1000",
+      "start": 0,
+      "goal": 35,
+      "lambda": 1000,
+      "result": {
+        "path": [0, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 35],
+        "edges": [1, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45],
+        "distanceMeters": 2699.93734732612,
+        "reads": 2.3066154303077107,
+        "cost": 5141.549645000137,
+        "geometryPoints": 137,
+        "geometryFirst": [-115, 36],
+        "geometryLast": [-114.97557177910079, 36.00449155587496]
+      }
+    },
+    {
+      "label": "row 0 west to row 2 east, λ=4000",
+      "start": 0,
+      "goal": 35,
+      "lambda": 4000,
+      "result": {
+        "path": [0, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 35],
+        "edges": [1, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45],
+        "distanceMeters": 2699.93734732612,
+        "reads": 2.3066154303077107,
+        "cost": 12061.395935923269,
+        "geometryPoints": 137,
+        "geometryFirst": [-115, 36],
+        "geometryLast": [-114.97557177910079, 36.00449155587496]
+      }
+    },
+    {
+      "label": "row 0 west to row 0 east, λ=4000",
+      "start": 0,
+      "goal": 11,
+      "lambda": 4000,
+      "result": {
+        "path": [0, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 11],
+        "edges": [1, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 22],
+        "distanceMeters": 2699.937347325329,
+        "reads": 2.3066154303077107,
+        "cost": 12061.395935922437,
+        "geometryPoints": 137,
+        "geometryFirst": [-115, 36],
+        "geometryLast": [-114.97557177910079, 36]
+      }
+    }
+  ]
+}

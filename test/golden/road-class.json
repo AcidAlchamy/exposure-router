@@ -1,0 +1,54 @@
+{
+  "name": "road-class",
+  "totalEdgeReads": 0,
+  "trips": [
+    {
+      "label": "300 m service vs 500 m residential",
+      "start": 0,
+      "goal": 1,
+      "lambda": 0,
+      "result": {
+        "path": [0, 2, 3, 1],
+        "edges": [1, 2, 3],
+        "distanceMeters": 499.9965826367926,
+        "reads": 0,
+        "cost": 524.9964117686322,
+        "geometryPoints": 28,
+        "geometryFirst": [-115, 36],
+        "geometryLast": [-114.9966688789683, 36]
+      }
+    },
+    {
+      "label": "120 m service vs 500 m residential",
+      "start": 10,
+      "goal": 11,
+      "lambda": 0,
+      "result": {
+        "path": [10, 11],
+        "edges": [4],
+        "distanceMeters": 119.98632921933505,
+        "reads": 0,
+        "cost": 311.96445597027116,
+        "geometryPoints": 7,
+        "geometryFirst": [-115, 36.00898311174991],
+        "geometryLast": [-114.99866755158732, 36.00898311174991]
+      }
+    },
+    {
+      "label": "primary vs residential vs living_street",
+      "start": 20,
+      "goal": 21,
+      "lambda": 0,
+      "result": {
+        "path": [20, 22, 21],
+        "edges": [8, 9],
+        "distanceMeters": 200.95205107082438,
+        "reads": 0,
+        "cost": 200.95205107082438,
+        "geometryPoints": 13,
+        "geometryFirst": [-115, 36.01796622349982],
+        "geometryLast": [-114.99777925264553, 36.01796622349982]
+      }
+    }
+  ]
+}

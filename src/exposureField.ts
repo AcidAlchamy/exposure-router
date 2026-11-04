@@ -42,6 +42,13 @@ const BLIND_SIDE_FACTOR = 0.25;
 
 const R = 6371000;
 const toRad = Math.PI / 180;
+/** Metres per degree of latitude on the sphere metersBetween measures on. */
+const M_PER_DEG_LAT = R * toRad;
+/**
+ * Above this many buckets east-west (only within a few km of a pole), heatAt
+ * scans every camera instead of the index.
+ */
+const MAX_SPAN_CELLS = 64;
 
 export function metersBetween(
   aLng: number,
@@ -95,7 +102,9 @@ export function cameraHeatAt(cam: FieldCamera, lng: number, lat: number): number
     heat = 1 - t * t * (3 - 2 * t);
   }
 
-  if (cam.directionDeg != null) {
+  // At the sensor's own position there is no bearing to compare with its
+  // facing (atan2(0, 0) would read as due north), so no cone reduction applies.
+  if (cam.directionDeg != null && d > 0) {
     const half = (cam.fovDeg ?? DEFAULT_FOV_DEG) / 2;
     const off = angleDiff(bearingDeg(cam.longitude, cam.latitude, lng, lat), cam.directionDeg);
     if (off > half) {
@@ -123,9 +132,23 @@ export class ExposureField {
   private readonly buckets = new Map<string, FieldCamera[]>();
   private readonly cellDeg: number;
 
+  /**
+   * Throws a RangeError for a camera with a non-finite latitude or longitude,
+   * or a non-finite (and non-null) facing, cone width or confidence: such a
+   * camera would otherwise be silently ignored, poison every heat value near
+   * it with NaN, or silently lose its facing.
+   */
   constructor(readonly cameras: FieldCamera[]) {
-    // Degrees of latitude per influence radius; longitude is narrower but using
-    // the latitude figure everywhere only makes buckets slightly generous.
+    cameras.forEach((c, i) => {
+      const bad =
+        (["latitude", "longitude"] as const).find((k) => !Number.isFinite(c[k])) ??
+        (["directionDeg", "fovDeg", "confidenceScore"] as const).find((k) => c[k] != null && !Number.isFinite(c[k]));
+      if (bad) throw new RangeError(`ExposureField: camera ${i} has a non-finite ${bad} (${c[bad]})`);
+    });
+    // Bucket size: roughly the influence radius in degrees, used for latitude
+    // and longitude alike. East-west a bucket is narrower in metres (by
+    // cos(latitude)), so heatAt works out how many buckets the radius spans
+    // rather than assuming one in each direction.
     this.cellDeg = INFLUENCE_RADIUS_M / 111_320;
     for (const c of cameras) {
       const k = this.key(c.longitude, c.latitude);
@@ -139,14 +162,33 @@ export class ExposureField {
     return `${Math.floor(lat / this.cellDeg)}:${Math.floor(lng / this.cellDeg)}`;
   }
 
-  /** Total heat at a point — the sum over every camera that can see it. */
+  /**
+   * Total heat at a point — the sum over every camera that can see it.
+   *
+   * Visits every bucket that can hold a camera within INFLUENCE_RADIUS_M of
+   * the point. A degree of longitude shrinks with cos(latitude), so the
+   * east-west reach in degrees grows away from the equator (x1.24 at 36°, x2
+   * at 60°); it is taken at the poleward edge of the search band, where it is
+   * widest. (Visiting only the 3x3 neighbouring buckets missed cameras up to
+   * 50 m inside the radius due east or west at 36°, and far more at higher
+   * latitudes.)
+   */
   heatAt(lng: number, lat: number): number {
-    const ci = Math.floor(lat / this.cellDeg);
-    const cj = Math.floor(lng / this.cellDeg);
+    // 0.1% margin so floating-point rounding can never drop a camera at the rim.
+    const reachLat = (INFLUENCE_RADIUS_M / M_PER_DEG_LAT) * 1.001;
+    const reachLng = reachLat / Math.cos(Math.min(90, Math.abs(lat) + reachLat) * toRad);
+    const i0 = Math.floor((lat - reachLat) / this.cellDeg);
+    const i1 = Math.floor((lat + reachLat) / this.cellDeg);
+    const j0 = Math.floor((lng - reachLng) / this.cellDeg);
+    const j1 = Math.floor((lng + reachLng) / this.cellDeg);
     let total = 0;
-    for (let di = -1; di <= 1; di++) {
-      for (let dj = -1; dj <= 1; dj++) {
-        const arr = this.buckets.get(`${ci + di}:${cj + dj}`);
+    if (j1 - j0 > MAX_SPAN_CELLS) {
+      for (const cam of this.cameras) total += cameraHeatAt(cam, lng, lat);
+      return total;
+    }
+    for (let i = i0; i <= i1; i++) {
+      for (let j = j0; j <= j1; j++) {
+        const arr = this.buckets.get(`${i}:${j}`);
         if (!arr) continue;
         for (const cam of arr) total += cameraHeatAt(cam, lng, lat);
       }
@@ -181,7 +223,8 @@ export interface RouteExposure {
 }
 
 /**
- * Integrate the exposure field along a route.
+ * Integrate the exposure field along a route. Throws a RangeError if any
+ * coordinate is not finite.
  *
  * Deliberately samples by DISTANCE, not by vertex. Route geometries have wildly
  * uneven vertex spacing — dense through turns, sparse on a straight highway — so
@@ -201,6 +244,10 @@ export function scoreRouteExposureField(route: RouteLine, field: ExposureField):
     const [aLng, aLat] = co[i]!;
     const [bLng, bLat] = co[i + 1]!;
     const segLen = metersBetween(aLng, aLat, bLng, bLat);
+    // NaN here would skip this segment and, through `carry`, every later one.
+    if (!(segLen >= 0)) {
+      throw new RangeError(`scoreRouteExposureField: non-finite coordinate in route vertices ${i}..${i + 1}`);
+    }
     if (segLen === 0) continue;
 
     // Walk this segment in SAMPLE_M steps, carrying the remainder across

@@ -8,8 +8,11 @@ import { ExposureField, metersBetween } from "./exposureField.js";
  * (parking aisles, alleys, drive-throughs) stay usable, because sometimes the
  * genuinely quiet path IS the back of a lot — but at 2.6x they never win on
  * convenience alone.
+ *
+ * Exported so the test harness can recompute a route's cost; it is not
+ * re-exported from the package index.
  */
-function classWeight(hw?: string): number {
+export function classWeight(hw?: string): number {
   switch (hw) {
     case "service":
       return 2.6;
@@ -90,7 +93,8 @@ const CORE_M = 30; // matches exposureField: crossing a core zone once ≈ 1 rea
  * Expected plate-reads accumulated by driving one edge — the integral of the
  * camera heat field along its geometry, in the same "reads" unit the rest of
  * the app scores in. Sampled by distance (not by vertex) so uneven vertex
- * spacing doesn't bias the estimate.
+ * spacing doesn't bias the estimate. Throws a RangeError if the geometry has a
+ * non-finite coordinate.
  */
 export function edgeExposure(edge: GraphEdge, field: ExposureField): number {
   const co = edge.geom;
@@ -101,6 +105,11 @@ export function edgeExposure(edge: GraphEdge, field: ExposureField): number {
     const [aLng, aLat] = co[i]!;
     const [bLng, bLat] = co[i + 1]!;
     const segLen = metersBetween(aLng, aLat, bLng, bLat);
+    // NaN here would skip this segment and, through `carry`, every later one,
+    // scoring the edge 0 reads whatever is near it.
+    if (!(segLen >= 0)) {
+      throw new RangeError(`edgeExposure: edge ${edge.a}→${edge.b} has a non-finite coordinate in geom[${i}..${i + 1}]`);
+    }
     if (segLen === 0) continue;
     let t = carry;
     while (t < segLen) {
@@ -129,7 +138,15 @@ export interface CostSurfaceResult {
  *
  * The heuristic is straight-line distance to the goal, which is admissible for
  * the distance term; exposure only ADDS cost, so distance-only stays a valid
- * lower bound and A* remains optimal. Returns null if the goal is unreachable.
+ * lower bound and A* remains optimal. That holds as long as no edge's lengthM is
+ * shorter than the straight line between its endpoint nodes.
+ *
+ * Returns null if the goal is unreachable, or if startId or goalId is not a
+ * node of the graph. Throws a RangeError for a metresPerRead that is not a
+ * finite number >= 0, for an edge whose lengthM is NaN or negative (+Infinity
+ * is allowed and makes the edge impassable), and for a node the search reaches
+ * whose position is not finite; throws an Error for an edge that points at a
+ * node missing from the graph.
  */
 export function routeCostSurface(
   graph: BuiltGraph,
@@ -138,19 +155,41 @@ export function routeCostSurface(
   goalId: number,
   metresPerRead: number,
 ): CostSurfaceResult | null {
+  // NaN or Infinity would make every edge cost NaN (Infinity · 0 reads) and
+  // read as "unreachable"; a negative rate makes edge costs negative, which A*
+  // cannot handle.
+  if (!(Number.isFinite(metresPerRead) && metresPerRead >= 0)) {
+    throw new RangeError(`routeCostSurface: metresPerRead must be a finite number >= 0, got ${metresPerRead}`);
+  }
   const goal = graph.nodes.get(goalId);
   if (!goal || !graph.nodes.has(startId)) return null;
+  if (!Number.isFinite(goal.lat) || !Number.isFinite(goal.lng)) {
+    throw new RangeError(`routeCostSurface: node ${goalId} has a non-finite position`);
+  }
 
   // Precompute exposure per edge once (each edge is relaxed from both ends).
   const edgeReads = new Float64Array(graph.edges.length);
-  for (let i = 0; i < graph.edges.length; i++) edgeReads[i] = edgeExposure(graph.edges[i]!, field);
+  for (let i = 0; i < graph.edges.length; i++) {
+    const e = graph.edges[i]!;
+    // A NaN length would silently drop the edge; a negative one breaks A*.
+    if (!(e.lengthM >= 0)) {
+      throw new RangeError(`routeCostSurface: edge ${i} (${e.a}→${e.b}) has lengthM ${e.lengthM}; lengths must be >= 0`);
+    }
+    edgeReads[i] = edgeExposure(e, field);
+  }
 
   const gScore = new Map<number, number>([[startId, 0]]);
   const cameFrom = new Map<number, { node: number; edge: number; forward: boolean }>();
   const closed = new Set<number>();
 
+  // Called once per node pushed onto the heap, so it also guards every node
+  // the search reaches: a NaN heuristic would corrupt the heap's ordering.
   const h = (id: number) => {
-    const n = graph.nodes.get(id)!;
+    const n = graph.nodes.get(id);
+    if (!n) throw new Error(`routeCostSurface: an edge references node ${id}, which is not in the graph`);
+    if (!Number.isFinite(n.lat) || !Number.isFinite(n.lng)) {
+      throw new RangeError(`routeCostSurface: node ${id} has a non-finite position`);
+    }
     return metersBetween(n.lng, n.lat, goal.lng, goal.lat);
   };
 
@@ -247,12 +286,20 @@ export function routeCostSurface(
   return { geometry, distanceMeters, reads, path: nodePath };
 }
 
-/** Nearest graph node to a point (linear scan; the per-trip subgraph is small). */
+/**
+ * Nearest graph node to a point by ground distance (linear scan; the per-trip
+ * subgraph is small). Ties go to the node listed first. Returns null for an
+ * empty graph or a non-finite point.
+ *
+ * Distance is measured in metres, not in raw degrees: away from the equator a
+ * degree of longitude is shorter than a degree of latitude (by cos(latitude)),
+ * so comparing degrees would favour north-south neighbours.
+ */
 export function nearestNode(graph: BuiltGraph, lat: number, lng: number): number | null {
   let best: number | null = null;
   let bestD = Infinity;
   for (const n of graph.nodes.values()) {
-    const d = (n.lat - lat) ** 2 + (n.lng - lng) ** 2;
+    const d = metersBetween(n.lng, n.lat, lng, lat);
     if (d < bestD) {
       bestD = d;
       best = n.id;

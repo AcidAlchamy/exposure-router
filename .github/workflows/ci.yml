@@ -8,15 +8,23 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # The engines minimum and the current LTS: golden outputs must hold on both.
+        node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm run build
       - run: npm run typecheck
+      # Unit tests, golden outputs (fails on any route or cost change), seeded
+      # property tests and the README quick start.
       - run: npm test
       # The measuring stick is part of CI: a routing change that moves the
       # numbers without an updated baseline fails here, on purpose.
       - run: npm run bench -- --check
+      # Keep the perf command runnable; its numbers are not compared.
+      - run: npm run bench:perf -- --runs 1 --only grid-80

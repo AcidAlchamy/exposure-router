@@ -30,8 +30,8 @@
       "crossedShortest": 3,
       "crossedRouted": 0,
       "endpointExempt": 0,
-      "readsShortest": 16.4009,
-      "readsRouted": 5.0074,
+      "readsShortest": 16.4058,
+      "readsRouted": 5.0123,
       "serviceM": 0
     },
     "parking-lot-temptation": {
@@ -52,7 +52,7 @@
       "crossedShortest": 5,
       "crossedRouted": 0,
       "endpointExempt": 0,
-      "readsShortest": 16.3383,
+      "readsShortest": 16.3413,
       "readsRouted": 0.4253,
       "serviceM": 297.4
     },
