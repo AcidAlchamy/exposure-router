@@ -8,8 +8,8 @@ import { forAll } from "./support/property.js";
 
 // Seeded property tests for findCoolCorridor, the experimental grid search.
 // It has no road graph to check against, so these pin its contract: it is
-// deterministic, it terminates, and what it returns is well-formed and inside
-// the area it searched.
+// deterministic, it terminates, what it returns is well-formed and inside the
+// area it searched, and a higher exchange rate never buys a hotter corridor.
 
 const PAD_M = 2500; // corridorSearch.ts: how far the grid extends past the trip's box
 
@@ -62,6 +62,22 @@ describe("findCoolCorridor properties", () => {
         const dFrom = metersBetween(t.from.lng, t.from.lat, w.lng, w.lat);
         const span = metersBetween(t.from.lng, t.from.lat, t.to.lng, t.to.lat);
         assert.ok(dFrom <= span + 2 * PAD_M * Math.SQRT2 + 200, `waypoint ${dFrom} m from the origin`);
+      }
+    });
+  });
+
+  test("a higher metersPerRead never yields a hotter corridor", () => {
+    // The search minimises distance + metersPerRead · heat, so (as for the
+    // router and λ) the heat it accepts can only fall as the rate rises.
+    // gridScore is that heat summed over the corridor's cells.
+    forAll("corridor monotonicity", 25, (rng) => {
+      const t = trip(rng);
+      let prev = Infinity;
+      for (const metersPerRead of [0, 200, 1000, 3000, 10000]) {
+        const r = findCoolCorridor(t.from, t.to, t.field, { metersPerRead });
+        assert.ok(r);
+        assert.ok(r.gridScore <= prev + 1e-4, `gridScore rose from ${prev} to ${r.gridScore} at ${metersPerRead}`);
+        prev = r.gridScore;
       }
     });
   });
