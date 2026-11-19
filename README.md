@@ -48,12 +48,13 @@ This is the most important fact about the library, so it comes first and it is
 enforced in code, not just in prose.
 
 A sensor is a [`FieldCamera`](src/exposureField.ts): a latitude, a longitude, an
-optional facing bearing, an optional cone width and a confidence score. That is
-the entire type.
+optional facing bearing, an optional cone width, a confidence score and, for a pole
+that carries several, an optional list of heads, each with its own facing and cone.
+That is the entire type.
 
 | The type has | The type has no field for |
 |---|---|
-| position · facing · cone width · confidence | a plate · a vehicle · a face · a timestamp · an owner · an observation |
+| position · facing · cone width · heads · confidence | a plate · a vehicle · a face · a timestamp · an owner · an observation |
 
 The router consumes **fixed-equipment geometry and nothing else**, and it emits
 **routes**. It has no notion of who is driving one. Nothing in this repository is
@@ -87,7 +88,9 @@ smooth fall to 0 at a 260 m influence radius. If the sensor has a facing, the he
 outside its cone is knocked down, **but not to zero** (a 0.25 floor): real-world
 facing data is often wrong, or describes only one of several heads on the same
 pole, and a privacy tool must not be confidently wrong in the unsafe direction.
-Confidence scales the whole thing, so a sensor we are unsure exists bends a route
+A pole listed with its heads is as watchful as the head that sees a point best:
+each head has its own cone, and the space between them is blind side (the same
+floor), not one wide cone or a full circle. Confidence scales the whole thing, so a sensor we are unsure exists bends a route
 without dominating it. Any point in the world has a temperature, and any route
 has an integral of it, in units of *expected reads*: comparable across routes of
 different length, shape and road class.
@@ -125,6 +128,7 @@ judged λ. Numbers come straight from the committed
 | `saturated-downtown` | 16.40 → **5.01** | +1.6 km | 3 → **0** |
 | `downtown-lv` (real roads) | 16.34 → **0.43** | +1.66 km | 5 → **0** |
 | `parking-lot-temptation` | 0 → 0 | 0 m, and 0 m of service roads | 0 → 0 |
+| `pole-gap` | 2.90 → **1.53** | +20 m | 1 → 1, the pole's blind side |
 | `flanked-exit` | 9.41 → 9.41 | 0 m | 2 → 2, *on purpose* |
 
 ### What it cannot do
@@ -209,6 +213,11 @@ got wrong, rebuilt abstractly so no real place is named:
 - `parking-lot-temptation`: a regression where a missing road-class term let the
   router "win" by cutting through 285 parking aisles. The drivability weight is
   what fixes it.
+
+`pole-gap` is built from scratch: a pole whose two heads watch a side street,
+against a single sensor facing oncoming traffic on the other way across. Priced as
+a full circle, the pole made the router choose the lens; priced by its heads, it
+takes the pole's blind side.
 
 One fixture, `downtown-lv.json`, carries **real road geometry**: a downtown Las
 Vegas subgraph derived from OpenStreetMap. Its node ids are synthetic and it
