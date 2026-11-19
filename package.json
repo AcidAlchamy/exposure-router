@@ -15,7 +15,7 @@
     "build": "tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "node --import tsx --test test/costSurface.test.ts test/metrics.test.ts",
+    "test": "node --import tsx --test test/costSurface.test.ts test/metrics.test.ts test/heads.test.ts",
     "bench": "node --import tsx bench/run.ts"
   },
   "devDependencies": {

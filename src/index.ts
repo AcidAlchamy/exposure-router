@@ -21,7 +21,7 @@ export {
   metersBetween,
   INFLUENCE_RADIUS_M,
 } from "./exposureField.js";
-export type { FieldCamera, RouteLine, RouteExposure } from "./exposureField.js";
+export type { FieldCamera, FieldHead, RouteLine, RouteExposure } from "./exposureField.js";
 
 export { findCoolCorridor } from "./corridorSearch.js";
 export type { LatLng, CorridorOptions, CorridorResult } from "./corridorSearch.js";

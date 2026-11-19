@@ -13,6 +13,14 @@
 // roughly — is what we minimise, and it is comparable across routes of different
 // lengths, road classes and shapes.
 
+/** One head of a sensor pole that carries several, each with its own facing. */
+export interface FieldHead {
+  /** Facing bearing, degrees cw from north. */
+  directionDeg: number;
+  /** Cone width in degrees. null = DEFAULT_FOV_DEG. */
+  fovDeg: number | null;
+}
+
 export interface FieldCamera {
   latitude: number;
   longitude: number;
@@ -22,6 +30,13 @@ export interface FieldCamera {
   fovDeg: number | null;
   /** 0..1 — how much we trust this camera exists. Scales its heat. */
   confidenceScore: number | null;
+  /**
+   * Every head of a pole that carries several. When present it replaces
+   * directionDeg/fovDeg: a point is as exposed as the head that sees it best, so
+   * the space between two heads is blind side rather than one wide cone or a full
+   * circle. Optional; a sensor without it behaves exactly as before.
+   */
+  heads?: FieldHead[] | null;
 }
 
 /** Beyond this a camera contributes nothing. Keeps the grid sum O(local). */
@@ -74,6 +89,20 @@ function angleDiff(a: number, b: number): number {
 }
 
 /**
+ * How much of a head's heat reaches a point at `bearing` from it: 1 inside its
+ * cone, tapering over 45° outside to BLIND_SIDE_FACTOR. Taper rather than cliff:
+ * a plate at the very edge of the field of view is not meaningfully safer than
+ * one just inside it.
+ */
+function coneFactor(bearing: number, head: FieldHead): number {
+  const half = (head.fovDeg ?? DEFAULT_FOV_DEG) / 2;
+  const off = angleDiff(bearing, head.directionDeg);
+  if (off <= half) return 1;
+  const taper = Math.max(0, 1 - (off - half) / 45);
+  return BLIND_SIDE_FACTOR + (1 - BLIND_SIDE_FACTOR) * taper;
+}
+
+/**
  * Heat from one camera at one point, in "expected reads" units (1.0 = certainly
  * read, 0 = out of range).
  *
@@ -95,15 +124,21 @@ export function cameraHeatAt(cam: FieldCamera, lng: number, lat: number): number
     heat = 1 - t * t * (3 - 2 * t);
   }
 
-  if (cam.directionDeg != null) {
-    const half = (cam.fovDeg ?? DEFAULT_FOV_DEG) / 2;
-    const off = angleDiff(bearingDeg(cam.longitude, cam.latitude, lng, lat), cam.directionDeg);
-    if (off > half) {
-      // Outside the cone. Taper rather than cliff — a plate at the very edge of
-      // the FOV is not meaningfully safer than one just inside it.
-      const taper = Math.max(0, 1 - (off - half) / 45);
-      heat *= BLIND_SIDE_FACTOR + (1 - BLIND_SIDE_FACTOR) * taper;
+  // A pole with several heads is as bad as its best-placed head; a single facing
+  // is a pole with one head. Unknown facing keeps the full heat all round.
+  const heads: FieldHead[] | null = cam.heads?.length
+    ? cam.heads
+    : cam.directionDeg != null
+      ? [{ directionDeg: cam.directionDeg, fovDeg: cam.fovDeg }]
+      : null;
+  if (heads) {
+    const bearing = bearingDeg(cam.longitude, cam.latitude, lng, lat);
+    let seen = 0;
+    for (const h of heads) {
+      seen = Math.max(seen, coneFactor(bearing, h));
+      if (seen === 1) break;
     }
+    heat *= seen;
   }
 
   // A camera we are unsure exists should bend a route, not dominate it.

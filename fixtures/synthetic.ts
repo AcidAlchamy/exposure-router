@@ -249,3 +249,54 @@ export function parkingLotTemptation(): Scenario {
     kind: "route",
   };
 }
+
+/**
+ * pole-gap — a sensor pole is as watchful as its heads, not a full circle. Two
+ * ways across: the north street passes a pole whose two heads watch the side
+ * street (north and south), so the trip goes by its blind side; the south street,
+ * 20 m shorter, passes a single sensor looking straight at oncoming traffic.
+ * Priced as a full circle, the pole makes the north street the hotter one and the
+ * router sends the trip in front of the lens. Priced by its heads, the judged λ
+ * takes the north street; λ=0 takes the shorter south one.
+ */
+export function poleGap(): Scenario {
+  const nodes: GraphNode[] = [];
+  const edges: GraphEdge[] = [];
+  let id = 0;
+  const mk = (eastM: number, northM: number) => {
+    const n = nodeAt(id++, eastM, northM);
+    nodes.push(n);
+    return n;
+  };
+  const A = mk(0, 0);
+  const B = mk(1200, 0);
+  const N1 = mk(0, 130);
+  const N2 = mk(1200, 130);
+  const S1 = mk(0, -120);
+  const S2 = mk(1200, -120);
+  edges.push(edgeBetween(A, N1, "residential"), edgeBetween(N1, N2, "residential"), edgeBetween(N2, B, "residential"));
+  edges.push(edgeBetween(A, S1, "residential"), edgeBetween(S1, S2, "residential"), edgeBetween(S2, B, "residential"));
+
+  const pole = camAt(600, 130 + 8);
+  pole.heads = [
+    { directionDeg: 0, fovDeg: null },
+    { directionDeg: 180, fovDeg: null },
+  ];
+  // Faces west, down the south street toward eastbound traffic.
+  const lens = { ...camAt(600, -120 - 8), directionDeg: 270 };
+
+  return {
+    name: "pole-gap",
+    description:
+      "A two-head pole watching a side street vs a single sensor facing oncoming traffic. " +
+      "Judged λ must take the pole's blind side (north street); λ=0 the shorter south street.",
+    nodes,
+    edges,
+    cameras: [pole, lens],
+    from: { lat: A.lat, lng: A.lng },
+    to: { lat: B.lat, lng: B.lng },
+    lambda: 1000,
+    kind: "route",
+  };
+}
+

@@ -3,6 +3,7 @@ import {
   flankedExit,
   saturatedDowntown,
   parkingLotTemptation,
+  poleGap,
 } from "../fixtures/synthetic.js";
 import { downtownLv, lambdaLadder } from "../fixtures/downtownLv.js";
 import type { Scenario } from "../fixtures/scenario.js";
@@ -18,6 +19,7 @@ export function allScenarios(): Scenario[] {
     flankedExit(),
     saturatedDowntown(),
     parkingLotTemptation(),
+    poleGap(),
     downtownLv(),
     lambdaLadder(),
   ];

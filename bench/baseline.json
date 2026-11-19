@@ -45,6 +45,17 @@
       "readsRouted": 0,
       "serviceM": 0
     },
+    "pole-gap": {
+      "distanceM": 1460,
+      "addedM": 20,
+      "addedPct": 1.4,
+      "crossedShortest": 1,
+      "crossedRouted": 1,
+      "endpointExempt": 0,
+      "readsShortest": 2.8989,
+      "readsRouted": 1.5317,
+      "serviceM": 0
+    },
     "downtown-lv": {
       "distanceM": 3702.2,
       "addedM": 1659.3,
